@@ -37,8 +37,8 @@ app.post("/repositories", (request, response) => {
     id,
     title,
     url,
-    techs: techs.split(", ").map(tech => tech.trim()),
-    likes
+    techs,
+    likes: 0
   };
 
   repositories.push(repository);
@@ -60,7 +60,7 @@ app.put("/repositories/:id", (request, response) => {
     id,
     title,
     url,
-    techs: techs.split(", ").map(tech => tech.trim()),
+    techs,
     likes: repositories[index].likes
   };
 
@@ -86,14 +86,14 @@ app.delete("/repositories/:id", (request, response) => {
 app.post("/repositories/:id/like", (request, response) => {
   // add new like
   const { id } = request.params;
-  const index = repositories.findIndex((rep) => rep.id === id);
+  const repository = repositories.find((rep) => rep.id === id);
 
-  if(index < 0){
-    return response.status(400).json({ error: "Repository not found ID." });
+  if(!repository){
+    return response.status(400).send();
   }
 
-  repositories[index].likes++;
-  return response.status(200).json(repositories[index]);
+  repository.likes += 1;
+  return response.status(200).json(repository);
 
 });
 
